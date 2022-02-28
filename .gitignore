@@ -1,3 +1,6 @@
+flask_session
+.DS_store
+.idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
