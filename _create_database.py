@@ -78,6 +78,30 @@ restaurants = [
         'no_of_4_chairs_table': 13,
         'no_of_6_chairs_table': 8,
         'no_of_12_chairs_table': 5,
+    },
+    {
+        'name': 'Burger King',
+        'desc': 'Eat Burger',
+        'no_of_2_chairs_table': 3,
+        'no_of_4_chairs_table': 5,
+        'no_of_6_chairs_table': 8,
+        'no_of_12_chairs_table': 1,
+    },
+    {
+        'name': 'Domino\'s',
+        'desc': 'Eat Pizza',
+        'no_of_2_chairs_table': 3,
+        'no_of_4_chairs_table': 5,
+        'no_of_6_chairs_table': 8,
+        'no_of_12_chairs_table': 1,
+    },
+    {
+        'name': 'Pani-Puri',
+        'desc': 'Eat Pani-Puri',
+        'no_of_2_chairs_table': 10,
+        'no_of_4_chairs_table': 2,
+        'no_of_6_chairs_table': 1,
+        'no_of_12_chairs_table': 0,
     }
 ]
 
