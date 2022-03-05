@@ -209,29 +209,36 @@ def get_booked_tables_for_user(user_id):
     }
 
 
-@restaurant.route('/getUnbookedTablesWithPartySize/<int:user_id>', methods=['GET'])
+@restaurant.route('/getUnbookedTablesWithPartySize/<int:party_size>', methods=['GET'])
 def get_unbooked_tables_with_party_size(party_size):
-    tables = db.engine.execute(f"select * from unbooked_tables "
-                               f"where "
-                               f"2*no_of_2_chairs_table+"
-                               f"4*no_of_4_chairs_table+"
-                               f"6*no_of_6_chairs_table+"
-                               f"12*no_of_12_chairs_table>={party_size}'")
+    tables_obj = db.engine.execute(f"select * from unbooked_tables "
+                                   f"where "
+                                   f"2*no_of_2_chairs_table+"
+                                   f"4*no_of_4_chairs_table+"
+                                   f"6*no_of_6_chairs_table+"
+                                   f"12*no_of_12_chairs_table>={party_size}")
+    keys = tables_obj.keys()
+    tables = tables_obj.fetchall()
+    tables = [dict(zip(keys, t)) for t in tables]
     return {
         'status': True,
         'data': tables
     }
 
 
-@restaurant.route('/getUnbookedTablesWithPartySizeAndDuration/<int:user_id>', methods=['GET'])
+@restaurant.route('/getUnbookedTablesWithPartySizeAndDuration/<int:party_size>/<int:duration>', methods=['GET'])
 def get_unbooked_tables_with_party_size_and_duration(party_size, duration):
-    tables = db.engine.execute(f"select *, DATEDIFF(second, start_timestamp, end_timestamp) AS duration "
-                               f"from unbooked_tables "
-                               f"where duration>={duration}"
-                               f"2*no_of_2_chairs_table+"
-                               f"4*no_of_4_chairs_table+"
-                               f"6*no_of_6_chairs_table+"
-                               f"12*no_of_12_chairs_table>={party_size}'")
+    tables_obj = db.engine.execute(f"select *,  Cast ((JulianDay(end_timestamp) - JulianDay(start_timestamp)) * "
+                                   f"24 * 60 * 60 As Integer) AS duration "
+                                   f"from unbooked_tables "
+                                   f"where duration>={duration} and "
+                                   f"2*no_of_2_chairs_table+"
+                                   f"4*no_of_4_chairs_table+"
+                                   f"6*no_of_6_chairs_table+"
+                                   f"12*no_of_12_chairs_table>={party_size}")
+    keys = tables_obj.keys()
+    tables = tables_obj.fetchall()
+    tables = [dict(zip(keys, t)) for t in tables]
     return {
         'status': True,
         'data': tables
