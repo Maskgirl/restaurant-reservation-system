@@ -6,15 +6,15 @@ from flask_login import login_user, logout_user, login_required
 from models import User
 from common import db
 
-auth = Blueprint('auth', __name__)
+auth_blueprint = Blueprint('auth', __name__)
 
 
-@auth.route('/login')
+@auth_blueprint.route('/login')
 def login():
     return render_template('login.html')
 
 
-@auth.route('/login', methods=['POST'])
+@auth_blueprint.route('/login', methods=['POST'])
 def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
@@ -30,15 +30,15 @@ def login_post():
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember, force=True)
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.index'))
 
 
-@auth.route('/signup')
+@auth_blueprint.route('/signup')
 def signup():
     return render_template('signup.html')
 
 
-@auth.route('/signup', methods=['POST'])
+@auth_blueprint.route('/signup', methods=['POST'])
 def signup_post():
     email = request.form.get('email')
     first_name = request.form.get('first_name')
@@ -63,8 +63,8 @@ def signup_post():
     return redirect(url_for('auth.login'))
 
 
-@auth.route('/logout')
+@auth_blueprint.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('auth.login'))

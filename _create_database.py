@@ -49,8 +49,8 @@ Table(
     Column("no_of_4_chairs_table", Integer),
     Column("no_of_6_chairs_table", Integer),
     Column("no_of_12_chairs_table", Integer),
-    Column("start_timestamp", DateTime, nullable=False),
-    Column("end_timestamp", DateTime, nullable=False),
+    Column("start_datetime", DateTime, nullable=False),
+    Column("end_datetime", DateTime, nullable=False),
     Column("date_created", DateTime, nullable=False)
 )
 
@@ -63,8 +63,8 @@ Table(
     Column("no_of_4_chairs_table", Integer),
     Column("no_of_6_chairs_table", Integer),
     Column("no_of_12_chairs_table", Integer),
-    Column("start_timestamp", DateTime, nullable=False),
-    Column("end_timestamp", DateTime, nullable=False),
+    Column("start_datetime", DateTime, nullable=False),
+    Column("end_datetime", DateTime, nullable=False),
     Column("date_created", DateTime, nullable=False)
 )
 
@@ -121,8 +121,8 @@ for restaurant in restaurants:
                                          no_of_4_chairs_table=restaurant['no_of_4_chairs_table'],
                                          no_of_6_chairs_table=restaurant['no_of_6_chairs_table'],
                                          no_of_12_chairs_table=restaurant['no_of_12_chairs_table'],
-                                         start_timestamp=datetime.datetime(2022, 2, 28, 5, 0, 0, 0),
-                                         end_timestamp=datetime.datetime(2022, 2, 28, 11, 0, 0, 0)
+                                         start_datetime=datetime.datetime(2022, 2, 28, 5, 0, 0, 0),
+                                         end_datetime=datetime.datetime(2022, 2, 28, 11, 0, 0, 0)
                                          )
     db.session.add(unbooked_tables_obj)
     db.session.commit()

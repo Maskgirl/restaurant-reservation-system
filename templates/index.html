@@ -6,8 +6,16 @@
 <h1 class="title">
     Restaurant Reservation System
 </h1>
+<br>
 <h2 class="subtitle">
-    
-    <button>Find Restaurants</button>
+    <form action="/" method="get">
+        <label for="party_size">Party Size: </label>
+        <input type="number" id="party_size" name="party_size" style="width: 8ch;" required="required"><br><br>
+        <label for="hours">Duration (hh:mm): </label>
+        <input type="number" id="hours" name="hours" style="width: 5ch;" required="required"> :
+        <input type="number" id="minutes" name="minutes" style="width: 5ch;" required="required"><br><br>
+        <input type="submit" value="Find Restaurants">
+    </form>
 </h2>
+
 {% endblock %}

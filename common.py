@@ -31,15 +31,15 @@ def create_app():
         return User.query.get(int(user_id))
 
     # blueprint for auth routes in our app
-    from auth import auth as auth_blueprint
+    from auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
 
     # blueprint for non-auth parts of app
-    from main import main as main_blueprint
+    from main import main_blueprint
     app.register_blueprint(main_blueprint)
 
     # blueprint for restaurant
-    from restaurant import restaurant as restaurant_blueprint
+    from restaurant_apis import restaurant_blueprint
     app.register_blueprint(restaurant_blueprint)
 
     return app

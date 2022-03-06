@@ -37,8 +37,8 @@ class UnbookedTables(db.Model, SerializerMixin):
     no_of_4_chairs_table = db.Column(db.Integer)
     no_of_6_chairs_table = db.Column(db.Integer)
     no_of_12_chairs_table = db.Column(db.Integer)
-    start_timestamp = db.Column(db.DateTime, nullable=False)
-    end_timestamp = db.Column(db.DateTime, nullable=False)
+    start_datetime = db.Column(db.DateTime, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -50,6 +50,6 @@ class BookedTables(db.Model, SerializerMixin):
     no_of_4_chairs_table = db.Column(db.Integer)
     no_of_6_chairs_table = db.Column(db.Integer)
     no_of_12_chairs_table = db.Column(db.Integer)
-    start_timestamp = db.Column(db.DateTime, nullable=False)
-    end_timestamp = db.Column(db.DateTime, nullable=False)
+    start_datetime = db.Column(db.DateTime, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
