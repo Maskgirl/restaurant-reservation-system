@@ -9,10 +9,10 @@ from models import *
 from common import db
 from utils import *
 
-restaurant_blueprint = Blueprint('restaurant', __name__)
+restaurant_apis_blueprint = Blueprint('restaurant_apis', __name__)
 
 
-@restaurant_blueprint.route('/addRestaurant', methods=['POST'])
+@restaurant_apis_blueprint.route('/addRestaurant', methods=['POST'])
 @login_required
 def add_restaurant_api():
     restaurant_obj = Restaurant(name=request.form['name'],
@@ -40,7 +40,7 @@ def add_restaurant_api():
     }
 
 
-@restaurant_blueprint.route('/removeRestaurant/<int:restaurant_id>')
+@restaurant_apis_blueprint.route('/removeRestaurant/<int:restaurant_id>')
 def remove_restaurant(restaurant_id):
     restaurant_obj = Restaurant.query.filter_by(id=restaurant_id).first()
     db.session.delete(restaurant_obj)
@@ -50,7 +50,7 @@ def remove_restaurant(restaurant_id):
     }
 
 
-@restaurant_blueprint.route('/getAllRestaurants', methods=['GET'])
+@restaurant_apis_blueprint.route('/getAllRestaurants', methods=['GET'])
 def get_all_restaurants_api():
     restaurants = get_all_restaurants()
     return {
@@ -59,7 +59,7 @@ def get_all_restaurants_api():
     }
 
 
-@restaurant_blueprint.route('/getUnbookedTablesForRestaurant/<int:restaurant_id>', methods=['GET'])
+@restaurant_apis_blueprint.route('/getUnbookedTablesForRestaurant/<int:restaurant_id>', methods=['GET'])
 def get_unbooked_tables_for_restaurant_api(restaurant_id):
     tables = get_unbooked_tables_for_restaurant(restaurant_id)
     return {
@@ -68,7 +68,7 @@ def get_unbooked_tables_for_restaurant_api(restaurant_id):
     }
 
 
-@restaurant_blueprint.route('/bookTables', methods=['POST'])
+@restaurant_apis_blueprint.route('/bookTables', methods=['POST'])
 @login_required
 def book_tables_api():
     restaurant_id = request.form['restaurant_id']
@@ -143,7 +143,7 @@ def book_tables_api():
     }
 
 
-@restaurant_blueprint.route('/getBookedTablesForRestaurant/<int:restaurant_id>', methods=['GET'])
+@restaurant_apis_blueprint.route('/getBookedTablesForRestaurant/<int:restaurant_id>', methods=['GET'])
 def get_booked_tables_for_restaurant_api(restaurant_id):
     tables = get_booked_tables_for_restaurant(restaurant_id)
     return {
@@ -152,7 +152,7 @@ def get_booked_tables_for_restaurant_api(restaurant_id):
     }
 
 
-@restaurant_blueprint.route('/getBookedTablesForUser/<int:user_id>', methods=['GET'])
+@restaurant_apis_blueprint.route('/getBookedTablesForUser/<int:user_id>', methods=['GET'])
 @login_required
 def get_booked_tables_for_user_api(user_id):
     if user_id != current_user.id:
@@ -167,7 +167,7 @@ def get_booked_tables_for_user_api(user_id):
     }
 
 
-@restaurant_blueprint.route('/getUnbookedTablesWithPartySize/<int:party_size>', methods=['GET'])
+@restaurant_apis_blueprint.route('/getUnbookedTablesWithPartySize/<int:party_size>', methods=['GET'])
 def get_unbooked_tables_with_party_size_api(party_size):
     tables = get_unbooked_tables_with_party_size(party_size)
     return {
@@ -176,8 +176,8 @@ def get_unbooked_tables_with_party_size_api(party_size):
     }
 
 
-@restaurant_blueprint.route('/getUnbookedTablesWithPartySizeAndDuration/<int:party_size>/<int:duration>',
-                            methods=['GET'])
+@restaurant_apis_blueprint.route('/getUnbookedTablesWithPartySizeAndDuration/<int:party_size>/<int:duration>',
+                                 methods=['GET'])
 def get_unbooked_tables_with_party_size_and_duration(party_size, duration):
     tables = get_unbooked_tables_with_party_size_and_duration(party_size, duration)
     return {

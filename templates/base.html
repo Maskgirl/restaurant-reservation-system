@@ -20,12 +20,12 @@
 
                 <div id="navbarMenuHeroA" class="navbar-menu">
                     <div class="navbar-end">
-                        <a href="{{ url_for('main.index') }}" class="navbar-item">
-                            Home
-                        </a>
                         {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('restaurant.find_tables') }}" class="navbar-item">
+                            Find Tables
+                        </a>
                         <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                            Profile
+                            My tables
                         </a>
                         {% endif %}
                         {% if not current_user.is_authenticated %}

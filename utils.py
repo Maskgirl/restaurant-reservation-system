@@ -84,17 +84,29 @@ def get_unbooked_tables_with_party_size(party_size):
     return tables
 
 
-def get_unbooked_tables_with_party_size_and_duration(party_size, duration):
+def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start_datetime, end_datetime):
     if duration is None:
         return get_unbooked_tables_with_party_size(party_size)
-    tables_obj = db.engine.execute(f"select *,  Cast ((JulianDay(end_datetime) - JulianDay(start_datetime)) * "
-                                   f"24 * 60 * 60 As Integer) AS duration "
-                                   f"from unbooked_tables "
-                                   f"where duration>={duration} and "
-                                   f"2*no_of_2_chairs_table+"
-                                   f"4*no_of_4_chairs_table+"
-                                   f"6*no_of_6_chairs_table+"
-                                   f"12*no_of_12_chairs_table>={party_size}")
+    tables_obj = db.engine.execute(f"""
+    select restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
+    STRFTIME('%d/%m/%Y, %H:%M', end_datetime) as 'to'
+    from unbooked_tables
+    join restaurant on restaurant.id=unbooked_tables.restaurant_id
+    where Cast((JulianDay(end_datetime) - JulianDay(start_datetime)) * 24 * 60 * 60 As Integer)>={duration} 
+    and (
+        '{start_datetime}'<=start_datetime and end_datetime<='{end_datetime}' 
+        or (
+            (start_datetime<='{start_datetime}' and end_datetime<='{end_datetime}' 
+            and JulianDay('{start_datetime}')+{duration}.0/(24*60*60)<=JulianDay(end_datetime))
+        or 
+            (start_datetime>='{start_datetime}' and end_datetime>='{end_datetime}'
+            and JulianDay('{end_datetime}')-{duration}.0/(24*60*60)>=JulianDay(start_datetime))
+        )
+    )
+    and 2*unbooked_tables.no_of_2_chairs_table+
+    4*unbooked_tables.no_of_4_chairs_table+
+    6*unbooked_tables.no_of_6_chairs_table+
+    12*unbooked_tables.no_of_12_chairs_table>={party_size}""")
     keys = tables_obj.keys()
     tables = tables_obj.fetchall()
     tables = [dict(zip(keys, t)) for t in tables]

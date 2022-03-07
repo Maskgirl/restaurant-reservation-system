@@ -1,14 +1,14 @@
-<!-- templates/index.html -->
+<!-- templates/find_tables.html -->
 
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
+<h1 class="title" style="text-align: left;">
     Restaurant Reservation System
 </h1>
 <br>
-<h2 class="subtitle">
-    <form action="/" method="get">
+<div style="text-align: left;">
+    <form action="/find_tables" method="get">
         <label for="party_size">Party Size: </label>
         <input type="number" id="party_size" name="party_size" style="width: 8ch;" required="required"
                value="{{args.party_size}}"><br><br>
@@ -16,6 +16,9 @@
         <input type="number" id="hours" name="hours" style="width: 5ch;" required="required" value="{{args.hours}}"> :
         <input type="number" id="minutes" name="minutes" style="width: 5ch;" required="required"
                value="{{args.minutes}}"><br><br>
+        <label for="start_datetime">Preferred Date and Time: </label><br>
+        From: <input type="datetime-local" id="start_datetime" name="start_datetime" required="required" value="{{args.start_datetime}}"> <br>
+        To: <input type="datetime-local" id="end_datetime" name="end_datetime" required="required" value="{{args.end_datetime}}"><br><br>
         <input type="submit" value="Find Restaurants">
     </form>
     <br>
@@ -40,9 +43,10 @@
         {% endfor %}
         </tbody>
     </table>
-    {% else %}
+    {% elif args|length >= 3 %}
     No tables found
     {% endif %}
-</h2>
+</div>
+
 
 {% endblock %}

@@ -39,7 +39,11 @@ def create_app():
     app.register_blueprint(main_blueprint)
 
     # blueprint for restaurant
-    from restaurant_apis import restaurant_blueprint
+    from restaurant_apis import restaurant_apis_blueprint
+    app.register_blueprint(restaurant_apis_blueprint)
+
+    # blueprint for restaurant
+    from restaurant import restaurant_blueprint
     app.register_blueprint(restaurant_blueprint)
 
     return app
