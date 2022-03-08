@@ -12,7 +12,7 @@ def index():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
     else:
-        return redirect(url_for('restaurant.find_tables'))
+        return redirect(url_for('restaurant.search'))
 
 
 @main_blueprint.route('/profile')

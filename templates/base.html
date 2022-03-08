@@ -21,11 +21,11 @@
                 <div id="navbarMenuHeroA" class="navbar-menu">
                     <div class="navbar-end">
                         {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('restaurant.find_tables') }}" class="navbar-item">
-                            Find Tables
+                        <a href="{{ url_for('restaurant.search') }}" class="navbar-item">
+                            Book Now
                         </a>
                         <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                            My tables
+                            My Bookings
                         </a>
                         {% endif %}
                         {% if not current_user.is_authenticated %}

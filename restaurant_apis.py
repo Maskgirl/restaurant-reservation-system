@@ -80,67 +80,15 @@ def book_tables_api():
     start_datetime = datetime.fromisoformat(request.form['start_datetime'])
     end_datetime = datetime.fromisoformat(request.form['end_datetime'])
 
-    if no_of_2_chairs_table == 0 \
-            and no_of_4_chairs_table == 0 \
-            and no_of_6_chairs_table == 0 \
-            and no_of_12_chairs_table == 0:
-        return {
-            'status': False,
-            'message': 'Wrong inputs.'
-        }
-
-    unbooked_tables_cur = UnbookedTables.query.filter(and_(UnbookedTables.start_datetime <= start_datetime,
-                                                           UnbookedTables.end_datetime >= end_datetime,
-                                                           UnbookedTables.no_of_2_chairs_table > no_of_2_chairs_table,
-                                                           UnbookedTables.no_of_4_chairs_table > no_of_4_chairs_table,
-                                                           UnbookedTables.no_of_6_chairs_table > no_of_6_chairs_table,
-                                                           UnbookedTables.no_of_12_chairs_table > no_of_12_chairs_table)
-                                                      )
-
-    if unbooked_tables_cur.count() == 0:
-        return {
-            'status': False,
-            'message': 'unbooked tables are not available.'
-        }
-
-    unbooked_tables_obj = unbooked_tables_cur[0]
-
-    new_unbooked_tables_obj_list = get_new_unbooked_tables_obj_list_after_booking(unbooked_tables_obj, start_datetime,
-                                                                                  end_datetime)
-
-    for new_unbooked_tables_obj in new_unbooked_tables_obj_list:
-        db.session.add(new_unbooked_tables_obj)
-
-    if no_of_2_chairs_table != unbooked_tables_obj.no_of_2_chairs_table \
-            and no_of_4_chairs_table != unbooked_tables_obj.no_of_4_chairs_table \
-            and no_of_6_chairs_table != unbooked_tables_obj.no_of_6_chairs_table \
-            and no_of_12_chairs_table != unbooked_tables_obj.no_of_12_chairs_table:
-        unbooked_tables_obj.start_datetime = start_datetime
-        unbooked_tables_obj.end_datetime = end_datetime
-        unbooked_tables_obj.no_of_2_chairs_table -= no_of_2_chairs_table
-        unbooked_tables_obj.no_of_4_chairs_table -= no_of_4_chairs_table
-        unbooked_tables_obj.no_of_6_chairs_table -= no_of_6_chairs_table
-        unbooked_tables_obj.no_of_12_chairs_table -= no_of_12_chairs_table
-        db.session.add(unbooked_tables_obj)
-    else:
-        db.session.delete(unbooked_tables_obj)
-
-    booked_tables_obj = BookedTables(restaurant_id=restaurant_id,
-                                     user_id=user_id,
-                                     no_of_2_chairs_table=no_of_2_chairs_table,
-                                     no_of_4_chairs_table=no_of_4_chairs_table,
-                                     no_of_6_chairs_table=no_of_6_chairs_table,
-                                     no_of_12_chairs_table=no_of_12_chairs_table,
-                                     start_datetime=start_datetime,
-                                     end_datetime=end_datetime
-                                     )
-    db.session.add(booked_tables_obj)
-    db.session.commit()
-    db.session.flush()
-
-    return {
-        'status': True
-    }
+    return book_tables(
+        restaurant_id,
+        user_id,
+        no_of_2_chairs_table,
+        no_of_4_chairs_table,
+        no_of_6_chairs_table,
+        no_of_12_chairs_table,
+        start_datetime,
+        end_datetime)
 
 
 @restaurant_apis_blueprint.route('/getBookedTablesForRestaurant/<int:restaurant_id>', methods=['GET'])

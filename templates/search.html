@@ -1,4 +1,4 @@
-<!-- templates/find_tables.html -->
+<!-- templates/search.html -->
 
 {% extends "base.html" %}
 
@@ -8,7 +8,7 @@
 </h1>
 <br>
 <div style="text-align: left;">
-    <form action="/find_tables" method="get">
+    <form action="" method="get">
         <label for="party_size">Party Size: </label>
         <input type="number" id="party_size" name="party_size" style="width: 8ch;" required="required"
                value="{{args.party_size}}"><br><br>
@@ -30,6 +30,7 @@
             {% for key, value in tables[0].items() %}
             <td> {{ key }}</td>
             {% endfor %}
+            <td>book now</td>
         </tr>
         </tr>
         </thead>
@@ -39,6 +40,7 @@
             {% for key, value in table.items() %}
             <td> {{ value }}</td>
             {% endfor %}
+            <td><a href="/bookNow?unbooked_tables_id={{ table['id'] }}"><button>Book Now</button></a></td>
         </tr>
         {% endfor %}
         </tbody>

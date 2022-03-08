@@ -1,5 +1,6 @@
 from models import *
 from common import db
+from sqlalchemy import and_
 
 
 def get_all_restaurants():
@@ -61,6 +62,81 @@ def get_new_unbooked_tables_obj_list_after_booking(unbooked_tables_obj, start_da
     # return tables
 
 
+def book_tables(
+        unbooked_tables_id,
+        user_id,
+        no_of_2_chairs_table,
+        no_of_4_chairs_table,
+        no_of_6_chairs_table,
+        no_of_12_chairs_table,
+        start_datetime,
+        end_datetime
+):
+    if no_of_2_chairs_table == 0 \
+            and no_of_4_chairs_table == 0 \
+            and no_of_6_chairs_table == 0 \
+            and no_of_12_chairs_table == 0:
+        return {
+            'status': False,
+            'message': 'Wrong inputs.'
+        }
+
+    unbooked_tables_cur = UnbookedTables.query.filter(and_(UnbookedTables.id == unbooked_tables_id,
+                                                           UnbookedTables.start_datetime <= start_datetime,
+                                                           UnbookedTables.end_datetime >= end_datetime,
+                                                           UnbookedTables.no_of_2_chairs_table >= no_of_2_chairs_table,
+                                                           UnbookedTables.no_of_4_chairs_table >= no_of_4_chairs_table,
+                                                           UnbookedTables.no_of_6_chairs_table >= no_of_6_chairs_table,
+                                                           UnbookedTables.no_of_12_chairs_table >= no_of_12_chairs_table)
+                                                      )
+
+    if unbooked_tables_cur.count() == 0:
+        return {
+            'status': False,
+            'message': 'unbooked tables are not available.'
+        }
+
+    unbooked_tables_obj = unbooked_tables_cur[0]
+    restaurant_id = unbooked_tables_obj.restaurant_id
+
+    new_unbooked_tables_obj_list = get_new_unbooked_tables_obj_list_after_booking(unbooked_tables_obj, start_datetime,
+                                                                                  end_datetime)
+
+    for new_unbooked_tables_obj in new_unbooked_tables_obj_list:
+        db.session.add(new_unbooked_tables_obj)
+
+    if no_of_2_chairs_table != unbooked_tables_obj.no_of_2_chairs_table \
+            and no_of_4_chairs_table != unbooked_tables_obj.no_of_4_chairs_table \
+            and no_of_6_chairs_table != unbooked_tables_obj.no_of_6_chairs_table \
+            and no_of_12_chairs_table != unbooked_tables_obj.no_of_12_chairs_table:
+        unbooked_tables_obj.start_datetime = start_datetime
+        unbooked_tables_obj.end_datetime = end_datetime
+        unbooked_tables_obj.no_of_2_chairs_table -= no_of_2_chairs_table
+        unbooked_tables_obj.no_of_4_chairs_table -= no_of_4_chairs_table
+        unbooked_tables_obj.no_of_6_chairs_table -= no_of_6_chairs_table
+        unbooked_tables_obj.no_of_12_chairs_table -= no_of_12_chairs_table
+        db.session.add(unbooked_tables_obj)
+    else:
+        db.session.delete(unbooked_tables_obj)
+
+    booked_tables_obj = BookedTables(restaurant_id=restaurant_id,
+                                     user_id=user_id,
+                                     no_of_2_chairs_table=no_of_2_chairs_table,
+                                     no_of_4_chairs_table=no_of_4_chairs_table,
+                                     no_of_6_chairs_table=no_of_6_chairs_table,
+                                     no_of_12_chairs_table=no_of_12_chairs_table,
+                                     start_datetime=start_datetime,
+                                     end_datetime=end_datetime
+                                     )
+    db.session.add(booked_tables_obj)
+    db.session.commit()
+    db.session.flush()
+
+    return {
+        'status': True
+    }
+
+
 def get_booked_tables_for_restaurant(restaurant_id):
     tables = [i.to_dict() for i in BookedTables.query.filter_by(restaurant_id=restaurant_id)]
     return tables
@@ -68,6 +144,11 @@ def get_booked_tables_for_restaurant(restaurant_id):
 
 def get_booked_tables_for_user(user_id):
     tables = [i.to_dict() for i in BookedTables.query.filter_by(user_id=user_id)]
+    return tables
+
+
+def get_unbooked_tables(unbooked_tables_id):
+    tables = UnbookedTables.query.filter_by(id=unbooked_tables_id).first().to_dict()
     return tables
 
 
@@ -88,8 +169,12 @@ def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start
     if duration is None:
         return get_unbooked_tables_with_party_size(party_size)
     tables_obj = db.engine.execute(f"""
-    select restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
-    STRFTIME('%d/%m/%Y, %H:%M', end_datetime) as 'to'
+    select unbooked_tables.id, restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
+    STRFTIME('%d/%m/%Y, %H:%M', end_datetime) as 'to', 
+    (2*unbooked_tables.no_of_2_chairs_table+
+    4*unbooked_tables.no_of_4_chairs_table+
+    6*unbooked_tables.no_of_6_chairs_table+
+    12*unbooked_tables.no_of_12_chairs_table) as capacity
     from unbooked_tables
     join restaurant on restaurant.id=unbooked_tables.restaurant_id
     where Cast((JulianDay(end_datetime) - JulianDay(start_datetime)) * 24 * 60 * 60 As Integer)>={duration} 
@@ -103,11 +188,21 @@ def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start
             and JulianDay('{end_datetime}')-{duration}.0/(24*60*60)>=JulianDay(start_datetime))
         )
     )
-    and 2*unbooked_tables.no_of_2_chairs_table+
-    4*unbooked_tables.no_of_4_chairs_table+
-    6*unbooked_tables.no_of_6_chairs_table+
-    12*unbooked_tables.no_of_12_chairs_table>={party_size}""")
+    and capacity>={party_size}""")
     keys = tables_obj.keys()
     tables = tables_obj.fetchall()
     tables = [dict(zip(keys, t)) for t in tables]
     return tables
+
+
+def delete_booking(booked_tables_id):
+    '''
+    6-7 booked
+
+    7-11
+    5-6
+
+    any row having start_datetime == 7 then update that row for example update 7-11 to 6-11
+    any row having end_datetime == 6 the update that row for example update 6-11 to 5-11
+
+    '''
