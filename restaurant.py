@@ -22,8 +22,8 @@ def search():
             'party_size': 2,
             'hours': 1,
             'minutes': 0,
-            'start_datetime': python_datetime_to_html_input_tag_datetime_local(datetime.now()),
-            'end_datetime': python_datetime_to_html_input_tag_datetime_local(datetime.now() + timedelta(days=7))
+            'start_datetime': str(datetime(year=2022, month=3, day=9, hour=0, minute=0)),
+            'end_datetime': str(datetime(year=2022, month=3, day=29, hour=0, minute=0))
         }
     party_size = args['party_size']
     hours = int(args['hours'])
