@@ -4,10 +4,11 @@
 
 {% block content %}
 <h1 class="title" style="text-align: left;">
-    Restaurant Reservation System
+    Book Now
 </h1>
 <br>
 <div style="text-align: left;">
+    Restaurant Name: {{ restaurant_name }} <br><br>
     <form action="" method="POST">
         <input type="number" name="unbooked_tables_id" value="{{unbooked_tables_id}}" hidden>
         <label for="no_of_2_chairs_table">Number of tables: </label><br>
@@ -33,8 +34,6 @@
                                      max=="{{unbooked_tables['no_of_12_chairs_table']}}"><br>
         <br>
         <label for="start_datetime">Date and Time: </label><br>
-        Available from "{{unbooked_tables['start_datetime'].replace("T", " ")}}" to
-        "{{unbooked_tables['end_datetime'].replace("T", " ")}}"<br>
         From: <input type="datetime-local" id="start_datetime" name="start_datetime"
                      required="required"
                      min="{{unbooked_tables['start_datetime']}}"
@@ -43,7 +42,7 @@
                    required="required"
                    min="{{unbooked_tables['start_datetime']}}"
                    max="{{unbooked_tables['end_datetime']}}"><br><br>
-        <input type="submit" value="Find Restaurants">
+        <input type="submit" value="Book Now">
     </form>
     <br>
     <div style="text-align: left;">

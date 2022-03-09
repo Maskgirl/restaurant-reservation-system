@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from models import *
 from common import db
 from sqlalchemy import and_
@@ -80,6 +82,8 @@ def book_tables(
             'status': False,
             'message': 'Wrong inputs.'
         }
+
+    end_datetime += timedelta(minutes=10)
 
     unbooked_tables_cur = UnbookedTables.query.filter(and_(UnbookedTables.id == unbooked_tables_id,
                                                            UnbookedTables.start_datetime <= start_datetime,
@@ -171,6 +175,10 @@ def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start
     tables_obj = db.engine.execute(f"""
     select unbooked_tables.id, restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
     STRFTIME('%d/%m/%Y, %H:%M', end_datetime) as 'to', 
+    unbooked_tables.no_of_2_chairs_table, 
+    unbooked_tables.no_of_4_chairs_table,
+    unbooked_tables.no_of_6_chairs_table,
+    unbooked_tables.no_of_12_chairs_table,
     (2*unbooked_tables.no_of_2_chairs_table+
     4*unbooked_tables.no_of_4_chairs_table+
     6*unbooked_tables.no_of_6_chairs_table+
@@ -179,20 +187,50 @@ def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start
     join restaurant on restaurant.id=unbooked_tables.restaurant_id
     where Cast((JulianDay(end_datetime) - JulianDay(start_datetime)) * 24 * 60 * 60 As Integer)>={duration} 
     and (
-        '{start_datetime}'<=start_datetime and end_datetime<='{end_datetime}' 
-        or (
-            (start_datetime<='{start_datetime}' and end_datetime<='{end_datetime}' 
-            and JulianDay('{start_datetime}')+{duration}.0/(24*60*60)<=JulianDay(end_datetime))
+        '{start_datetime}'<=start_datetime and '{end_datetime}'>=end_datetime 
         or 
-            (start_datetime>='{start_datetime}' and end_datetime>='{end_datetime}'
-            and JulianDay('{end_datetime}')-{duration}.0/(24*60*60)>=JulianDay(start_datetime))
-        )
+            (
+                (start_datetime<='{start_datetime}' and end_datetime<='{end_datetime}' 
+                and JulianDay('{start_datetime}')+{duration}.0/(24*60*60)<=JulianDay(end_datetime))
+            or 
+                (start_datetime>='{start_datetime}' and end_datetime>='{end_datetime}'
+                and JulianDay('{end_datetime}')-{duration}.0/(24*60*60)>=JulianDay(start_datetime))
+            or 
+                ('{start_datetime}'>=start_datetime and '{end_datetime}'<=end_datetime 
+                 and JulianDay('{start_datetime}')+{duration}.0/(24*60*60)<=JulianDay('{end_datetime}'))
+            ) 
+        
     )
     and capacity>={party_size}""")
     keys = tables_obj.keys()
     tables = tables_obj.fetchall()
     tables = [dict(zip(keys, t)) for t in tables]
     return tables
+
+
+def get_restaurant_details(restaurant_id):
+    return Restaurant.query.filter_by(id=restaurant_id).first().to_dict()
+
+
+def get_user_bookings(user_id):
+    tables_obj = db.engine.execute(f"""
+       select booked_tables.id, restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
+       STRFTIME('%d/%m/%Y, %H:%M',  DATETIME(end_datetime, '-10 minutes')) as 'to', 
+       booked_tables.no_of_2_chairs_table, 
+       booked_tables.no_of_4_chairs_table,
+       booked_tables.no_of_6_chairs_table,
+       booked_tables.no_of_12_chairs_table,
+       (2*booked_tables.no_of_2_chairs_table+
+       4*booked_tables.no_of_4_chairs_table+
+       6*booked_tables.no_of_6_chairs_table+
+       12*booked_tables.no_of_12_chairs_table) as capacity
+       from booked_tables
+       join restaurant on restaurant.id=booked_tables.restaurant_id
+       where booked_tables.user_id={user_id}""")
+    keys = tables_obj.keys()
+    tables = tables_obj.fetchall()
+    tables = [dict(zip(keys, t)) for t in tables]
+    return tables  # return [i.to_dict() for i in BookedTables.query.filter_by(user_id=user_id)]
 
 
 def delete_booking(booked_tables_id):
@@ -206,3 +244,7 @@ def delete_booking(booked_tables_id):
     any row having end_datetime == 6 the update that row for example update 6-11 to 5-11
 
     '''
+
+
+def python_datetime_to_html_input_tag_datetime_local(dt):
+    return dt.strftime("%Y-%m-%dT%H:%M")

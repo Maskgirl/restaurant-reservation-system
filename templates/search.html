@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="title" style="text-align: left;">
-    Restaurant Reservation System
+    Search Available Bookings
 </h1>
 <br>
 <div style="text-align: left;">
@@ -28,7 +28,7 @@
         <tr>
         <tr>
             {% for key, value in tables[0].items() %}
-            <td> {{ key }}</td>
+            <td> {{ stringcase.titlecase(key) }}</td>
             {% endfor %}
             <td>book now</td>
         </tr>

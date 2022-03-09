@@ -8,47 +8,67 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Restaurant Reservation System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
-<section class="hero is-primary is-fullheight">
+<section>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                <li class="nav-item  {% if g.active_page == 'search' %} active {% endif %}">
+                    <a class="nav-link" href="{{ url_for('restaurant.search') }}">Book Now</a>
+                </li>
+                <li class="nav-item  {% if g.active_page == 'my_booking' %} active {% endif %}">
+                    <a class="nav-link" href="{{ url_for('main.my_booking') }}">
+                        My Bookings
+                    </a>
+                </li>
+                {% endif %}
 
-    <div class="hero-head">
-        <nav class="navbar">
-            <div class="container">
+                {% if not current_user.is_authenticated %}
+                <li class="nav-item {% if g.active_page == 'login' %} active {% endif %}">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">
+                        Login
+                    </a>
+                </li>
 
-                <div id="navbarMenuHeroA" class="navbar-menu">
-                    <div class="navbar-end">
-                        {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('restaurant.search') }}" class="navbar-item">
-                            Book Now
-                        </a>
-                        <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                            My Bookings
-                        </a>
-                        {% endif %}
-                        {% if not current_user.is_authenticated %}
-                        <a href="{{ url_for('auth.login') }}" class="navbar-item">
-                            Login
-                        </a>
-                        <a href="{{ url_for('auth.signup') }}" class="navbar-item">
-                            Sign Up
-                        </a>
-                        {% endif %}
-                        {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                            Logout
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </div>
+                <li class="nav-item">
+                    <a class="nav-link {% if g.active_page == 'signup' %} active {% endif %}"
+                       href="{{ url_for('auth.signup') }}">
+                        Sign Up
+                    </a>
+                </li>
+                {% endif %}
 
-    <div class="hero-body">
-        <div class="container has-text-centered">
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                        Logout
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div>
+        <div>
             {% block content %}
             {% endblock %}
         </div>

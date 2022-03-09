@@ -1,0 +1,38 @@
+<!-- templates/search.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="text-align: left;">
+    My Bookings
+</h1>
+<br>
+<div style="text-align: left;">
+    {% if tables %}
+    <table>
+        <thead>
+        <tr>
+        <tr>
+            {% for key, value in tables[0].items() %}
+            <td> {{ stringcase.titlecase(key) }}</td>
+            {% endfor %}
+        </tr>
+        </tr>
+        </thead>
+        <tbody>
+        {% for table in tables %}
+        <tr>
+            {% for key, value in table.items() %}
+            <td> {{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    No tables found
+    {% endif %}
+</div>
+
+
+{% endblock %}

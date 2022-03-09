@@ -121,8 +121,8 @@ for restaurant in restaurants:
                                          no_of_4_chairs_table=restaurant['no_of_4_chairs_table'],
                                          no_of_6_chairs_table=restaurant['no_of_6_chairs_table'],
                                          no_of_12_chairs_table=restaurant['no_of_12_chairs_table'],
-                                         start_datetime=datetime.datetime(2022, 3, 7, 17, 0, 0, 0),
-                                         end_datetime=datetime.datetime(2022, 3, 7, 23, 0, 0, 0)
+                                         start_datetime=datetime.datetime.now(),
+                                         end_datetime=datetime.datetime.now() + datetime.timedelta(days=10)
                                          )
     db.session.add(unbooked_tables_obj)
     db.session.commit()

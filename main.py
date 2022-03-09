@@ -1,8 +1,9 @@
 # main.py
 
-from flask import Blueprint, render_template, jsonify, request, redirect, url_for
+from flask import Blueprint, render_template, jsonify, request, redirect, url_for, g
 from flask_login import login_required, current_user
 from utils import *
+import stringcase
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -15,7 +16,9 @@ def index():
         return redirect(url_for('restaurant.search'))
 
 
-@main_blueprint.route('/profile')
+@main_blueprint.route('/my_booking')
 @login_required
-def profile():
-    return render_template('profile.html', name=f'{current_user.first_name} {current_user.last_name}')
+def my_booking():
+    g.active_page = "my_booking"
+    tables = get_user_bookings(current_user.id)
+    return render_template('my_bookings.html', tables=tables, stringcase=stringcase)
