@@ -9,28 +9,38 @@
 <br>
 <div style="text-align: left;">
     <form action="" method="get">
-        <label for="party_size">Party Size: </label>
-        <input type="number" id="party_size" name="party_size" style="width: 8ch;" required="required"
-               value="{{args.party_size}}"><br><br>
-        <label for="hours">Duration (hh:mm): </label>
-        <input type="number" id="hours" name="hours" style="width: 5ch;" required="required" value="{{args.hours}}"> :
-        <input type="number" id="minutes" name="minutes" style="width: 5ch;" required="required"
-               value="{{args.minutes}}"><br><br>
-        <label for="start_datetime">Preferred Date and Time: </label><br>
-        From: <input type="datetime-local" id="start_datetime" name="start_datetime" required="required" value="{{args.start_datetime}}"> <br>
-        To: <input type="datetime-local" id="end_datetime" name="end_datetime" required="required" value="{{args.end_datetime}}"><br><br>
-        <input type="submit" value="Find Restaurants">
+        <div class="form-group">
+            <label for="party_size">Party Size: </label>
+            <input type="number" id="party_size" name="party_size" style="width: 8ch;" required="required"
+               value="{{args.party_size}}">
+        </div>
+
+        <div class="form-group">
+            <label for="hours">Duration (hh:mm): </label>
+            <input type="number" id="hours" name="hours" style="width: 5ch;" required="required" value="{{args.hours}}"> :
+            <input type="number" id="minutes" name="minutes" style="width: 5ch;" required="required"
+                   value="{{args.minutes}}"><br>
+        </div>
+
+        <div class="form-group">
+            <label for="start_datetime">Preferred Date and Time: </label><br>
+            From: <input type="datetime-local" id="start_datetime" name="start_datetime" required="required"
+                         value="{{args.start_datetime}}">
+            To: <input type="datetime-local" id="end_datetime" name="end_datetime" required="required"
+                       value="{{args.end_datetime}}"><br><br>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Find Restaurants">
     </form>
     <br>
     {% if tables %}
-    <table>
+    <table class="table table-striped">
         <thead>
         <tr>
         <tr>
             {% for key, value in tables[0].items() %}
-            <td> {{ stringcase.titlecase(key) }}</td>
+            <td scope="col"> {{ stringcase.titlecase(key) }}</td>
             {% endfor %}
-            <td>book now</td>
+            <td scope="col">book now</td>
         </tr>
         </tr>
         </thead>

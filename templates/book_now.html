@@ -10,39 +10,45 @@
 <div style="text-align: left;">
     Restaurant Name: {{ restaurant_name }} <br><br>
     <form action="" method="POST">
-        <input type="number" name="unbooked_tables_id" value="{{unbooked_tables_id}}" hidden>
-        <label for="no_of_2_chairs_table">Number of tables: </label><br>
-        Table with 2 chairs: <input type="number" id="no_of_2_chairs_table" name="no_of_2_chairs_table"
-                                    style="width: 8ch;" required="required"
-                                    value="0"
-                                    min="0"
-                                    max="{{unbooked_tables['no_of_2_chairs_table']}}"><br>
-        Table with 4 chairs: <input type="number" id="no_of_4_chairs_table" name="no_of_4_chairs_table"
-                                    style="width: 8ch;" required="required"
-                                    value="0"
-                                    min="0"
-                                    max=="{{unbooked_tables['no_of_4_chairs_table']}}"><br>
-        Table with 6 chairs: <input type="number" id="no_of_6_chairs_table" name="no_of_6_chairs_table"
-                                    style="width: 8ch;" required="required"
-                                    value="0"
-                                    min="0"
-                                    max=="{{unbooked_tables['no_of_6_chairs_table']}}"><br>
-        Table with 12 chairs: <input type="number" id="no_of_12_chairs_table" name="no_of_12_chairs_table"
-                                     style="width: 8ch;" required="required"
-                                     value="0"
-                                     min="0"
-                                     max=="{{unbooked_tables['no_of_12_chairs_table']}}"><br>
-        <br>
-        <label for="start_datetime">Date and Time: </label><br>
-        From: <input type="datetime-local" id="start_datetime" name="start_datetime"
-                     required="required"
-                     min="{{unbooked_tables['start_datetime']}}"
-                     max="{{unbooked_tables['end_datetime']}}"> <br>
-        To: <input type="datetime-local" id="end_datetime" name="end_datetime"
-                   required="required"
-                   min="{{unbooked_tables['start_datetime']}}"
-                   max="{{unbooked_tables['end_datetime']}}"><br><br>
-        <input type="submit" value="Book Now">
+        <div class="form-group">
+            <input type="number" name="unbooked_tables_id" value="{{unbooked_tables_id}}" hidden>
+            <label for="no_of_2_chairs_table">Number of tables: </label><br>
+            Table with 2 chairs: <input type="number" id="no_of_2_chairs_table" name="no_of_2_chairs_table"
+                                        style="width: 8ch;" required="required"
+                                        value="{{no_of_2_chairs_table}}"
+                                        min="0"
+                                        max="{{unbooked_tables['no_of_2_chairs_table']}}"><br>
+            Table with 4 chairs: <input type="number" id="no_of_4_chairs_table" name="no_of_4_chairs_table"
+                                        style="width: 8ch;" required="required"
+                                        value="{{no_of_4_chairs_table}}"
+                                        min="0"
+                                        max=="{{unbooked_tables['no_of_4_chairs_table']}}"><br>
+            Table with 6 chairs: <input type="number" id="no_of_6_chairs_table" name="no_of_6_chairs_table"
+                                        style="width: 8ch;" required="required"
+                                        value="{{no_of_6_chairs_table}}"
+                                        min="0"
+                                        max=="{{unbooked_tables['no_of_6_chairs_table']}}"><br>
+            Table with 12 chairs: <input type="number" id="no_of_12_chairs_table" name="no_of_12_chairs_table"
+                                         style="width: 8ch;" required="required"
+                                         value="{{no_of_12_chairs_table}}"
+                                         min="0"
+                                         max=="{{unbooked_tables['no_of_12_chairs_table']}}"><br>
+        </div>
+        <div class="form-group">
+            <label for="start_datetime">Date and Time: </label><br>
+            From: <input type="datetime-local" id="start_datetime" name="start_datetime"
+                         required="required"
+                         value="{{start_datetime}}"
+                         min="{{unbooked_tables['start_datetime']}}"
+                         max="{{unbooked_tables['end_datetime']}}">
+            To: <input type="datetime-local" id="end_datetime" name="end_datetime"
+                       required="required"
+                       value="{{end_datetime}}"
+                       min="{{unbooked_tables['start_datetime']}}"
+                       max="{{unbooked_tables['end_datetime']}}"><br><br>
+        </div>
+
+        <input type="submit" class="btn btn-primary" value="Book Now">
     </form>
     <br>
     <div style="text-align: left;">
@@ -52,9 +58,6 @@
         {% else %}
         Failed to book, Error Message is "{{ res['message'] }}"
         {% endif %}
-        <br>
-        <a href="/search">Search More</a><br>
-        <a href="/my_bookings">View My Bookings</a>
         {% endif %}
 
     </div>

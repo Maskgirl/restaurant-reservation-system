@@ -110,9 +110,9 @@ def book_tables(
         db.session.add(new_unbooked_tables_obj)
 
     if no_of_2_chairs_table != unbooked_tables_obj.no_of_2_chairs_table \
-            and no_of_4_chairs_table != unbooked_tables_obj.no_of_4_chairs_table \
-            and no_of_6_chairs_table != unbooked_tables_obj.no_of_6_chairs_table \
-            and no_of_12_chairs_table != unbooked_tables_obj.no_of_12_chairs_table:
+            or no_of_4_chairs_table != unbooked_tables_obj.no_of_4_chairs_table \
+            or no_of_6_chairs_table != unbooked_tables_obj.no_of_6_chairs_table \
+            or no_of_12_chairs_table != unbooked_tables_obj.no_of_12_chairs_table:
         unbooked_tables_obj.start_datetime = start_datetime
         unbooked_tables_obj.end_datetime = end_datetime
         unbooked_tables_obj.no_of_2_chairs_table -= no_of_2_chairs_table
@@ -152,8 +152,22 @@ def get_booked_tables_for_user(user_id):
 
 
 def get_unbooked_tables(unbooked_tables_id):
-    tables = UnbookedTables.query.filter_by(id=unbooked_tables_id).first().to_dict()
-    return tables
+    tables_obj = db.engine.execute(f"""
+    select id, restaurant_id, start_datetime, DATETIME(end_datetime, '-10 minutes') as 'end_datetime',
+    unbooked_tables.no_of_2_chairs_table,
+    unbooked_tables.no_of_4_chairs_table,
+    unbooked_tables.no_of_6_chairs_table,
+    unbooked_tables.no_of_12_chairs_table,
+    (2*unbooked_tables.no_of_2_chairs_table+
+    4*unbooked_tables.no_of_4_chairs_table+
+    6*unbooked_tables.no_of_6_chairs_table+
+    12*unbooked_tables.no_of_12_chairs_table) as capacity from unbooked_tables 
+    where id={unbooked_tables_id}
+    """)
+    keys = tables_obj.keys()
+    tables = tables_obj.fetchall()
+    tables = [dict(zip(keys, t)) for t in tables]
+    return tables[0]
 
 
 def get_unbooked_tables_with_party_size(party_size):
@@ -172,9 +186,10 @@ def get_unbooked_tables_with_party_size(party_size):
 def get_unbooked_tables_with_party_size_and_duration(party_size, duration, start_datetime, end_datetime):
     if duration is None:
         return get_unbooked_tables_with_party_size(party_size)
+    end_datetime += timedelta(minutes=10)
     tables_obj = db.engine.execute(f"""
     select unbooked_tables.id, restaurant.name, STRFTIME('%d/%m/%Y, %H:%M', start_datetime) as 'from', 
-    STRFTIME('%d/%m/%Y, %H:%M', end_datetime) as 'to', 
+    STRFTIME('%d/%m/%Y, %H:%M', DATETIME(end_datetime, '-10 minutes')) as 'to', 
     unbooked_tables.no_of_2_chairs_table, 
     unbooked_tables.no_of_4_chairs_table,
     unbooked_tables.no_of_6_chairs_table,

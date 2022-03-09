@@ -9,12 +9,12 @@
 <br>
 <div style="text-align: left;">
     {% if tables %}
-    <table>
+    <table class="table table-striped">
         <thead>
         <tr>
         <tr>
             {% for key, value in tables[0].items() %}
-            <td> {{ stringcase.titlecase(key) }}</td>
+            <td scope="col"> {{ stringcase.titlecase(key) }}</td>
             {% endfor %}
         </tr>
         </tr>
