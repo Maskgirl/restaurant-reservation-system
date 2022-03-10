@@ -22,8 +22,8 @@ def search():
             'party_size': 2,
             'hours': 1,
             'minutes': 0,
-            'start_datetime': str(datetime(year=2022, month=3, day=9, hour=0, minute=0)),
-            'end_datetime': str(datetime(year=2022, month=3, day=29, hour=0, minute=0))
+            'start_datetime': "2022-03-09T00:00",
+            'end_datetime': "2022-03-29T00:00"
         }
     party_size = args['party_size']
     hours = int(args['hours'])
