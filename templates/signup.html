@@ -8,7 +8,7 @@
     <div>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <div class="invalid-feedback">
+        <div class="alert alert-danger">
             {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>.
         </div>
         {% endif %}
