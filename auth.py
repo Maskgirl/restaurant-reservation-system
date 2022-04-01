@@ -36,7 +36,7 @@ def login_post():
     return redirect(url_for('main.index'))
 
 
-@auth_blueprint.route('/signup')
+@auth_blueprint.route('/signup', methods=['GET'])
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('restaurant.search'))
