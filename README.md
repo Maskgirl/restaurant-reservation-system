@@ -2,6 +2,8 @@
 
 Restaurant Reservation System in Flask with SQLalchemy
 
+Live Demo - https://rss-tithi.herokuapp.com/
+
 # Steps to run
 
 ## Install requirements
